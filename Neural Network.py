@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import sklearn
 from testCases import *
 import sklearn.datasets
-import sklearn.linear_model
 from planar_utils import plot_decision_boundary, sigmoid, load_planar_dataset, load_extra_datasets
 
 
@@ -118,26 +117,13 @@ def update_parameters(parameters, grads, learning_rate=1.2):
 # GRADED FUNCTION: nn_model
 
 def nn_model(X, Y, n_h, num_iterations=10000, print_cost=False):
-    """
-    Arguments:
-    X -- dataset of shape (2, number of examples)
-    Y -- labels of shape (1, number of examples)
-    n_h -- size of the hidden layer
-    num_iterations -- Number of iterations in gradient descent loop
-    print_cost -- if True, print the cost every 1000 iterations
-
-    Returns:
-    parameters -- parameters learnt by the model. They can then be used to predict.
-    """
-
+    
     np.random.seed(3)
     n_x = layer_sizes(X, Y)[0]
     n_y = layer_sizes(X, Y)[2]
 
     # Initialize parameters
-    ### START CODE HERE ### (≈ 1 line of code)
     parameters = initialize_parameters(n_x, n_h, n_y)
-    ### END CODE HERE ###
 
     # Loop (gradient descent)
 
@@ -249,16 +235,11 @@ datasets = {"noisy_circles": noisy_circles,
             "blobs": blobs,
             "gaussian_quantiles": gaussian_quantiles}
 
-### START CODE HERE ### (choose your dataset)
 dataset = "noisy_moons"
-### END CODE HERE ###
-
 X, Y = datasets[dataset]
 X, Y = X.T, Y.reshape(1, Y.shape[0])
-
 # make blobs binary
 if dataset == "blobs":
     Y = Y%2
-
 # Visualize the data
 plt.scatter(X[0, :], X[1, :], c=Y[0, :], s=40, cmap=plt.cm.get_cmap("Spectral"))
