@@ -17,9 +17,9 @@ def initialize_parameters(n_x, n_h, n_y):
     np.random.seed(2)
 
     W1 = np.random.randn(n_h, n_x) * 0.01
-    b1 = np.random.randn(n_h, 1)
+    b1 = np.zeros(shape=(n_h, 1))
     W2 = np.random.randn(n_y, n_h) * 0.01
-    b2 = np.random.randn(n_y, 1)
+    b2 = np.zeros(shape=(n_y, 1))
 
     assert (W1.shape == (n_h, n_x))
     assert (b1.shape == (n_h, 1))
@@ -57,12 +57,12 @@ def forward_propagation(X, parameters):
 
 def compute_cost(A2, Y, parameters):
     m = Y.shape[1]
-    logprobs = np.multiply(np.log(A2), Y)
-    cost = - np.sum(logprobs)
-
+    W1 = parameters['W1']
+    W2 = parameters['W2']
+    logprobs = np.multiply(np.log(A2), Y) + np.multiply((1 - Y), np.log(1 - A2))
+    cost = - np.sum(logprobs) / m
     cost = float(np.squeeze(cost))
     assert (isinstance(cost, float))
-
     return cost
 
 
@@ -122,25 +122,24 @@ def nn_model(X, Y, n_h, num_iterations=10000, print_cost=False):
     n_x = layer_sizes(X, Y)[0]
     n_y = layer_sizes(X, Y)[2]
 
-    # Initialize parameters
+    # Initialize parameters, then retrieve W1, b1, W2, b2. Inputs: "n_x, n_h, n_y". Outputs = "W1, b1, W2, b2, parameters".
     parameters = initialize_parameters(n_x, n_h, n_y)
+    W1 = parameters['W1']
+    b1 = parameters['b1']
+    W2 = parameters['W2']
+    b2 = parameters['b2']    
+   # Loop (gradient descent)
 
-    # Loop (gradient descent)
-
-    for i in range(0, num_iterations):
-
+    for i in range(0, num_iterations):         
         # Forward propagation. Inputs: "X, parameters". Outputs: "A2, cache".
         A2, cache = forward_propagation(X, parameters)
-
         # Cost function. Inputs: "A2, Y, parameters". Outputs: "cost".
         cost = compute_cost(A2, Y, parameters)
-
         # Backpropagation. Inputs: "parameters, cache, X, Y". Outputs: "grads".
         grads = backward_propagation(parameters, cache, X, Y)
-
         # Gradient descent parameter update. Inputs: "parameters, grads". Outputs: "parameters".
         parameters = update_parameters(parameters, grads)
-
+        
         # Print the cost every 1000 iterations
         if print_cost and i % 1000 == 0:
             print("Cost after iteration %i: %f" % (i, cost))
